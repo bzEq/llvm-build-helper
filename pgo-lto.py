@@ -72,7 +72,7 @@ def BuildCommonCMakeCommand(config):
 def BuildLDFlags(config):
     flags = [
         '-Wl,-rpath={path}'.format(
-            path=os.path.join(config.default_clang, 'lib'))
+            path=os.path.join(os.path.abspath(config.default_clang), 'lib')),
     ]
     return flags
 
@@ -80,7 +80,7 @@ def BuildLDFlags(config):
 def BuildPass1CFlags(config):
     flags = [
         '-fprofile-generate={path}'.format(path=os.path.join(
-            os.path.abspath(config.build_dir), 'pass1', 'profiles'))
+            os.path.abspath(config.build_dir), 'pass1', 'profiles')),
     ]
     if config.native:
         flags.append('-march=native')
@@ -94,7 +94,7 @@ def BuildPass1CXXFlags(config):
 def BuildPass2CFlags(config):
     flags = [
         '-fprofile-use={path}'.format(path=os.path.join(
-            os.path.abspath(config.build_dir), 'pass2', 'default.profdata'))
+            os.path.abspath(config.build_dir), 'pass2', 'default.profdata')),
     ]
     if config.native:
         flags.append('-march=native')
