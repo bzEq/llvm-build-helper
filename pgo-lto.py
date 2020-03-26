@@ -110,7 +110,7 @@ def RunPass1(config):
     cmd = BuildCommonCMakeCommand(config)
     # Use clang for training.
     cmd.append('-DLLVM_ENABLE_PROJECTS=clang')
-    cmd.append(config.src_dir)
+    cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
     env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
     env['CFLAGS'] = ' '.join(BuildPass1CFlags(config))
@@ -141,7 +141,7 @@ def RunPass2(config):
     cmd.append('-DLLVM_ENABLE_LTO=Thin')
     cmd.append('-DLLVM_ENABLE_PROJECTS={projects}'.format(
         projects=';'.join(DEFAULT_PROJECTS)))
-    cmd.append(config.src_dir)
+    cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
     env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
     env['CFLAGS'] = ' '.join(BuildPass2CFlags(config))
