@@ -34,6 +34,7 @@ def main():
     parser.add_argument('--src_dir', required=True)
     parser.add_argument('--build_dir', required=True)
     parser.add_argument('--native', action='store_true', default=False)
+    parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     config = parser.parse_args()
     CreateDirs(config)
     return not (RunPass1(config) and RunPass2(config))
@@ -52,7 +53,7 @@ def GlobPass1Profiles(config):
 
 def BuildCommonCMakeCommand(config):
     cmd = [
-        'cmake',
+        config.cmake_binary,
         '-GNinja',
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_C_COMPILER={clang}'.format(
