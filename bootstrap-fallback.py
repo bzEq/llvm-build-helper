@@ -35,8 +35,8 @@ def BuildCommonCMakeCommand(config):
         '-DCMAKE_INSTALL_PREFIX={install_prefix}'.format(
             install_prefix=config.install_prefix),
         '-DLLVM_ENABLE_ASSERTIONS=On',
-        # Only build clang
-        '-DLLVM_ENABLE_PROJECTS=clang',
+        # Only build clang and lld
+        '-DLLVM_ENABLE_PROJECTS=clang;lld',
     ]
     return cmd
 
