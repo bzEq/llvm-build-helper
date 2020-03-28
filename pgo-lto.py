@@ -27,7 +27,7 @@ def FindTool(clang_path, name):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Build LLVM with pgo and lto enabled')
+        description='Build Clang/LLVM with pgo and lto enabled')
     parser.add_argument('--default_clang', required=True)
     parser.add_argument('--install_prefix', required=True)
     parser.add_argument('--binutils_include', required=False)
