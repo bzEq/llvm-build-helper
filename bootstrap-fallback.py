@@ -65,6 +65,8 @@ def RunStage2(config):
     cmd = BuildCommonCMakeCommand(config)
     cmd.append('-DCMAKE_C_COMPILER={cc}'.format(cc=os.path.join(
         os.path.abspath(config.build_dir), 'stage1', 'bin', 'clang')))
+    cmd.append('-DLLVM_USE_LINKER={ld}'.format(ld=os.path.join(
+        os.path.abspath(config.build_dir), 'stage1', 'bin', 'ld.lld')))
     cmd.append(os.path.abspath(config.src_dir))
     err = subprocess.call(cmd, cwd=wd)
     if err != 0:
