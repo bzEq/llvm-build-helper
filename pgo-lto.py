@@ -64,7 +64,7 @@ def BuildCommonCMakeCommand(config):
         '-DCMAKE_INSTALL_PREFIX={install_prefix}'.format(
             install_prefix=config.install_prefix),
         '-DLLVM_ENABLE_ASSERTIONS=On',
-        '-DLLVM_ENABLE_LLD=On',
+        '-DLLVM_USE_LINKER=lld',
         '-DLLVM_ENABLE_LIBCXX=On',
     ]
     if config.binutils_include:

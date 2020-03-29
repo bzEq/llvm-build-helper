@@ -38,7 +38,7 @@ def BuildCMakeCommand(config):
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_C_COMPILER={clang}'.format(
             clang=os.path.abspath(config.bootstrap_clang)),
-        '-DLLVM_ENABLE_LLD=On',
+        '-DLLVM_USE_LINKER=lld',
         '-DCMAKE_INSTALL_PREFIX={install_prefix}'.format(
             install_prefix=config.install_prefix),
         '-DLLVM_ENABLE_ASSERTIONS=On',
