@@ -27,6 +27,7 @@ def main():
     parser.add_argument('--build_dir', required=True)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--binutils_include')
+    parser.add_argument('--config_only', action='store_true', default=False)
     config = parser.parse_args()
     return not BuildDefaultClang(config)
 
@@ -58,6 +59,8 @@ def BuildDefaultClang(config):
     if err != 0:
         logging.error('cmake failed')
         return False
+    if config.config_only:
+        return True
     err = subprocess.call([
         'ninja',
         'check-all',
