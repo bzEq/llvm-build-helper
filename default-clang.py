@@ -22,6 +22,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Build Clang/LLVM with default configuration')
     parser.add_argument('--bootstrap_clang', default=shutil.which('clang'))
+    parser.add_argument('--bootstrap_lld', default=shutil.which('ld.lld'))
     parser.add_argument('--install_prefix', required=True)
     parser.add_argument('--src_dir', required=True)
     parser.add_argument('--build_dir', required=True)
@@ -39,7 +40,8 @@ def BuildCMakeCommand(config):
         '-DCMAKE_BUILD_TYPE=Release',
         '-DCMAKE_C_COMPILER={clang}'.format(
             clang=os.path.abspath(config.bootstrap_clang)),
-        '-DLLVM_USE_LINKER=lld',
+        '-DLLVM_USE_LINKER={lld}'.format(
+            lld=os.path.abspath(config.bootstrap_lld)),
         '-DCMAKE_INSTALL_PREFIX={install_prefix}'.format(
             install_prefix=config.install_prefix),
         '-DLLVM_ENABLE_ASSERTIONS=On',
