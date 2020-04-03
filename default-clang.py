@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--binutils_include')
     parser.add_argument('--config_only', action='store_true', default=False)
+    parser.add_argument('--use_newpm', action='store_true', default=False)
     config = parser.parse_args()
     return not BuildDefaultClang(config)
 
@@ -51,6 +52,8 @@ def BuildCMakeCommand(config):
     if config.binutils_include:
         cmd.append('-DLLVM_BINUTILS_INCDIR={path}'.format(
             path=config.binutils_include))
+    if config.use_newpm:
+        cmd.append('-DLLVM_USE_NEWPM=On')
     cmd.append(os.path.abspath(config.src_dir))
     return cmd
 
