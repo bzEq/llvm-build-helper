@@ -15,6 +15,7 @@ DEFAULT_PROJECTS = [
     'libcxx',
     'libcxxabi',
     'lld',
+    'mlir',
 ]
 
 
