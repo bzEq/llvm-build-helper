@@ -66,7 +66,6 @@ def BuildCommonCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_USE_LINKER=lld',
         '-DLLVM_ENABLE_LIBCXX=On',
-        '-DLLVM_STATIC_LINK_CXX_STDLIB=On',
     ]
     if config.binutils_include:
         cmd.append('-DLLVM_BINUTILS_INCDIR={path}'.format(
