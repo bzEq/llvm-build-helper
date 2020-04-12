@@ -17,6 +17,7 @@ def main():
     parser.add_argument('--build_dir', required=True)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--bootstrap_cc', default=shutil.which('gcc'))
+    parser.add_argument('--enable_libcxx', action='store_true', default=False)
     config = parser.parse_args()
     CreateDirs(config)
     return not (RunStage1(config) and RunStage2(config))
@@ -38,6 +39,8 @@ def BuildCommonCMakeCommand(config):
         # Only build clang and lld
         '-DLLVM_ENABLE_PROJECTS=clang;lld',
     ]
+    if config.enable_libcxx:
+        cmd.append('-DLLVM_ENABLE_LIBCXX=On')
     return cmd
 
 
