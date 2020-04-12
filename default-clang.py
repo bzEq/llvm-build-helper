@@ -31,10 +31,6 @@ def main():
     parser.add_argument('--binutils_include')
     parser.add_argument('--config_only', action='store_true', default=False)
     parser.add_argument('--use_newpm', action='store_true', default=False)
-    parser.add_argument('--enable_libcxx', action='store_true', default=False)
-    parser.add_argument('--static_cxx_stdlib',
-                        action='store_true',
-                        default=False)
     config = parser.parse_args()
     return not BuildDefaultClang(config)
 
@@ -59,10 +55,6 @@ def BuildCMakeCommand(config):
             path=config.binutils_include))
     if config.use_newpm:
         cmd.append('-DLLVM_USE_NEWPM=On')
-    if config.enable_libcxx:
-        cmd.append('-DLLVM_ENABLE_LIBCXX=On')
-    if config.static_cxx_stdlib:
-        cmd.append('-DLLVM_STATIC_LINK_CXX_STDLIB=On')
     cmd.append(os.path.abspath(config.src_dir))
     return cmd
 
