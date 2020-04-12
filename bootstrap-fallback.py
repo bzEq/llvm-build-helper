@@ -41,6 +41,7 @@ def BuildCommonCMakeCommand(config):
     ]
     if config.enable_libcxx:
         cmd.append('-DLLVM_ENABLE_LIBCXX=On')
+        cmd.append('-DLLVM_STATIC_LINK_CXX_STDLIB=On')
     return cmd
 
 
