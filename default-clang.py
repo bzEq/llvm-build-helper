@@ -24,6 +24,7 @@ def main():
         description='Build Clang/LLVM with default configuration')
     parser.add_argument('--bootstrap_clang', default=shutil.which('clang'))
     parser.add_argument('--bootstrap_lld', default=shutil.which('ld.lld'))
+    parser.add_argument('--debug', action='store_true', default=False)
     parser.add_argument('--install_prefix', required=True)
     parser.add_argument('--src_dir', required=True)
     parser.add_argument('--build_dir', required=True)
@@ -39,7 +40,8 @@ def BuildCMakeCommand(config):
     cmd = [
         config.cmake_binary,
         '-GNinja',
-        '-DCMAKE_BUILD_TYPE=Release',
+        '-DCMAKE_BUILD_TYPE={build}'.format(
+            build='Debug' if config.debug else 'Release'),
         '-DCMAKE_C_COMPILER={clang}'.format(
             clang=os.path.abspath(config.bootstrap_clang)),
         '-DLLVM_USE_LINKER={lld}'.format(
