@@ -146,6 +146,8 @@ def RunPass2(config):
     cmd.append('-DLLVM_ENABLE_LTO=Thin')
     cmd.append('-DLLVM_ENABLE_PROJECTS={projects}'.format(
         projects=';'.join(DEFAULT_PROJECTS)))
+    cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(ld=os.path.join(
+        os.path.abspath(config.install_prefix), 'bin', 'ld.lld')))
     cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
     env['LDFLAGS'] = ' '.join(BuildLDFlags(config))

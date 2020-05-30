@@ -51,6 +51,8 @@ def BuildCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_ENABLE_PROJECTS={projects}'.format(
             projects=';'.join(DEFAULT_PROJECTS)),
+        '-DCLANG_DEFAULT_LINKER={ld}'.format(ld=os.path.join(
+            os.path.abspath(config.install_prefix), 'bin', 'ld.lld')),
     ]
     if config.binutils_include:
         cmd.append('-DLLVM_BINUTILS_INCDIR={path}'.format(
