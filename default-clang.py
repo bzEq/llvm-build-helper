@@ -32,6 +32,7 @@ def main():
     parser.add_argument('--binutils_include')
     parser.add_argument('--config_only', action='store_true', default=False)
     parser.add_argument('--use_newpm', action='store_true', default=False)
+    parser.add_argument('--skip_test', action='store_true', default=False)
     config = parser.parse_args()
     return not BuildDefaultClang(config)
 
@@ -71,10 +72,12 @@ def BuildDefaultClang(config):
         return False
     if config.config_only:
         return True
-    err = subprocess.call([
+    ninja_build = [
         'ninja',
-        'check-all',
-    ], cwd=config.build_dir)
+    ]
+    if not config.skip_test:
+        ninja_build.append('check-all')
+    err = subprocess.call(ninja_build, cwd=config.build_dir)
     if err != 0:
         logging.error('ninja failed')
         return False

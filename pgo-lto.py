@@ -124,7 +124,12 @@ def RunPass1(config):
     if err != 0:
         logging.error('cmake failed in pass1')
         return False
-    err = subprocess.call(['ninja', 'check-all'], cwd=wd)
+    ninja_build = [
+        'ninja',
+    ]
+    if not config.skip_test:
+        ninja_build.append('check-all')
+    err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
         logging.warning('ninja failed in pass1')
     return True

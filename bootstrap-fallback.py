@@ -17,6 +17,7 @@ def main():
     parser.add_argument('--build_dir', required=True)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--bootstrap_cc', default=shutil.which('gcc'))
+    parser.add_argument('--skip_test', action='store_true', default=False)
     config = parser.parse_args()
     CreateDirs(config)
     return not (RunStage1(config) and RunStage2(config))
@@ -79,10 +80,12 @@ def RunStage2(config):
     if err != 0:
         logging.error('cmake failed in stage2')
         return False
-    err = subprocess.call([
+    ninja_build = [
         'ninja',
-        'check-all',
-    ], cwd=wd)
+    ]
+    if not config.skip_test:
+        ninja_build.append('check-all')
+    err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
         logging.error('ninja failed in stage2')
         return False
