@@ -5,7 +5,6 @@ import os
 import sys
 import subprocess
 import argparse
-import shlex
 import shutil
 import logging
 
@@ -53,8 +52,6 @@ def BuildCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_ENABLE_PROJECTS={projects}'.format(
             projects=';'.join(DEFAULT_PROJECTS)),
-        '-DLLVM_LIT_ARGS={args}'.format(args=shlex.quote('-threads=%d' %
-                                                         os.cpu_count())),
         '-DCLANG_DEFAULT_LINKER={ld}'.format(ld=os.path.join(
             os.path.abspath(config.install_prefix), 'bin', 'ld.lld')),
     ]
