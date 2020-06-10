@@ -33,6 +33,7 @@ def main():
     parser.add_argument('--config_only', action='store_true', default=False)
     parser.add_argument('--use_newpm', action='store_true', default=False)
     parser.add_argument('--skip_test', action='store_true', default=False)
+    parser.add_argument('--clang_default_linker')
     config = parser.parse_args()
     return not BuildDefaultClang(config)
 
@@ -52,9 +53,10 @@ def BuildCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_ENABLE_PROJECTS={projects}'.format(
             projects=';'.join(DEFAULT_PROJECTS)),
-        '-DCLANG_DEFAULT_LINKER={ld}'.format(ld=os.path.join(
-            os.path.abspath(config.install_prefix), 'bin', 'ld.lld')),
     ]
+    if config.clang_default_linker:
+        cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
+            ld=config.clang_default_linker))
     if config.binutils_include:
         cmd.append('-DLLVM_BINUTILS_INCDIR={path}'.format(
             path=config.binutils_include))

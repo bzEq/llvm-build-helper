@@ -72,9 +72,6 @@ def RunStage2(config):
         ld=shutil.which('ld.lld',
                         path=os.path.join(os.path.abspath(config.build_dir),
                                           'stage1', 'bin'))))
-    # Use lld as clang's default linker.
-    cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(ld=os.path.join(
-        os.path.abspath(config.install_prefix), 'bin', 'ld.lld')))
     cmd.append(os.path.abspath(config.src_dir))
     err = subprocess.call(cmd, cwd=wd)
     if err != 0:
