@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--native', action='store_true', default=False)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--skip_pass1', action='store_true', default=False)
+    parser.add_argument('--skip_test', action='store_true', default=False)
     config = parser.parse_args()
     CreateDirs(config)
     if config.skip_pass1:
