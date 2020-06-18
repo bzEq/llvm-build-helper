@@ -8,12 +8,11 @@ import argparse
 import shutil
 import logging
 
+# Use LLVM_ENABLE_RUNTIMES to enable libcxx, libcxxabi, libunwind
+# and compiler-rt.
 DEFAULT_PROJECTS = [
     'clang',
     'clang-tools-extra',
-    'compiler-rt',
-    'libcxx',
-    'libcxxabi',
     'lld',
     'mlir',
 ]
@@ -53,6 +52,7 @@ def BuildCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_ENABLE_PROJECTS={projects}'.format(
             projects=';'.join(DEFAULT_PROJECTS)),
+        '-DLLVM_ENABLE_RUNTIMES=all',
     ]
     if config.clang_default_linker:
         cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
