@@ -53,7 +53,8 @@ def BuildCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_ENABLE_PROJECTS={projects}'.format(
             projects=';'.join(DEFAULT_PROJECTS)),
-        '-DLLVM_LIT_ARGS=-v -vv',
+        '-DLLVM_LIT_ARGS=--threads={threads} -v -vv'.format(
+            threads=os.cpu_count()),
     ]
     if config.clang_default_linker:
         cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
