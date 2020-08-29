@@ -17,15 +17,21 @@ def main():
     parser.add_argument('--build_dir', required=True)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--bootstrap_cc', default=shutil.which('gcc'))
-    parser.add_argument('--skip_test', action='store_true', default=False)
+    parser.add_argument('--skip_stage2', default=False, action='store_true')
+    parser.add_argument('--skip_stage2_test',
+                        action='store_true',
+                        default=False)
     config = parser.parse_args()
     CreateDirs(config)
-    return not (RunStage1(config) and RunStage2(config))
+    if not config.skip_stage2:
+        return not (RunStage1(config) and RunStage2(config))
+    return not (RunStage1(config))
 
 
 def CreateDirs(config):
     os.makedirs(os.path.join(config.build_dir, 'stage1'), exist_ok=True)
-    os.makedirs(os.path.join(config.build_dir, 'stage2'), exist_ok=True)
+    if not config.skip_stage2:
+        os.makedirs(os.path.join(config.build_dir, 'stage2'), exist_ok=True)
 
 
 def BuildCommonCMakeCommand(config):
@@ -80,7 +86,7 @@ def RunStage2(config):
     ninja_build = [
         'ninja',
     ]
-    if not config.skip_test:
+    if not config.skip_stage2_test:
         ninja_build.append('check-all')
     err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
