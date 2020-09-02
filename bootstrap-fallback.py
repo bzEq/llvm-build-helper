@@ -93,6 +93,7 @@ def RunStage2(config):
     ]
     if not config.skip_stage2_test:
         ninja_build.append('check-all')
+    ninja_build.append('package')
     err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
         logging.error('ninja failed in stage2')

@@ -217,7 +217,10 @@ def RunPass2(config):
     if err != 0:
         logging.error('cmake failed in pass2')
         return False
-    err = subprocess.call(['ninja'], cwd=wd)
+    err = subprocess.call([
+        'ninja',
+        'package',
+    ], cwd=wd)
     if err != 0:
         logging.error('ninja failed in pass2')
         return False

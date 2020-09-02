@@ -81,6 +81,7 @@ def BuildDefaultClang(config):
     ]
     if not config.skip_test:
         ninja_build.append('check-all')
+    ninja_build.append('package')
     err = subprocess.call(ninja_build, cwd=config.build_dir)
     if err != 0:
         logging.error('ninja failed')
