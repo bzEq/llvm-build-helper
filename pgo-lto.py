@@ -18,6 +18,7 @@ DEFAULT_PROJECTS = [
     'libcxx',
     'libcxxabi',
     'lld',
+    'mlir',
 ]
 
 
@@ -37,7 +38,7 @@ def main():
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--skip_pass1', action='store_true', default=False)
     parser.add_argument('--skip_test', action='store_true', default=False)
-    parser.add_argument('--clang_default_linker')
+    parser.add_argument('--llvm_test_suite_path')
     config = parser.parse_args()
     CreateDirs(config)
     if config.skip_pass1:
@@ -48,6 +49,9 @@ def main():
 def CreateDirs(config):
     os.makedirs(os.path.join(config.build_dir, 'pass1'), exist_ok=True)
     os.makedirs(os.path.join(config.build_dir, 'pass2'), exist_ok=True)
+    if config.llvm_test_suite_path:
+        os.makedirs(os.path.join(config.build_dir, 'test_suite'),
+                    exist_ok=True)
 
 
 def GlobPass1Profiles(config):
@@ -112,11 +116,52 @@ def BuildPass2CXXFlags(config):
     return BuildPass2CFlags(config)
 
 
+def BuildLLVMTestSuiteWithPass1Driver(config):
+    pass1_path = os.path.abspath(os.path.join(config.build_dir, 'pass1'))
+    build_path = os.path.abspath(os.path.join(config.build_dir, 'test_suite'))
+    configure_cmake = [
+        config.cmake_binary,
+        '-GNinja',
+        '-DCMAKE_BUILD_TYPE=Release',
+        '-DCMAKE_C_COMPILER={cc}'.format(cc=FindTool(pass1_path, 'clang')),
+        '-DCMAKE_CXX_COMPILER={cxx}'.format(
+            cxx=FindTool(pass1_path, 'clang++')),
+        '-S',
+        os.path.abspath(config.llvm_test_suite_path),
+        '-B',
+        build_path,
+    ]
+    err = subprocess.call(configure_cmake, env=env)
+    if err != 0:
+        logging.error('cmake failed configuring test suite')
+        return False
+    cmd = [
+        'ninja',
+        '-C',
+        build_path,
+    ]
+    err = subprocess.call(cmd)
+    if err != 0:
+        logging.error('ninja failed building test suite')
+        return False
+    run_tests = [
+        FindTool(pass1_path, 'llvm-lit'),
+        build_path,
+    ]
+    err = subprocess.call(run_tests)
+    if err != 0:
+        logging.error('Failed to run test suite')
+        return False
+    return True
+
+
 def RunPass1(config):
     wd = os.path.join(config.build_dir, 'pass1')
     cmd = BuildCommonCMakeCommand(config)
     # Use clang for training.
     cmd.append('-DLLVM_ENABLE_PROJECTS=clang')
+    cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
+        ld=FindTool(config.default_clang, 'ld.lld')))
     cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
     env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
@@ -129,11 +174,13 @@ def RunPass1(config):
     ninja_build = [
         'ninja',
     ]
-    if not config.skip_test:
+    if not config.skip_test and not config.llvm_test_suite_path:
         ninja_build.append('check-all')
     err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
         logging.warning('ninja failed in pass1')
+    if config.llvm_test_suite_path:
+        return BuildLLVMTestSuiteWithPass1Driver(config)
     return True
 
 
@@ -153,9 +200,6 @@ def RunPass2(config):
     cmd.append('-DLLVM_ENABLE_LTO=Thin')
     cmd.append('-DLLVM_ENABLE_PROJECTS={projects}'.format(
         projects=';'.join(DEFAULT_PROJECTS)))
-    if config.clang_default_linker:
-        cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
-            ld=config.clang_default_linker))
     cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
     env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
