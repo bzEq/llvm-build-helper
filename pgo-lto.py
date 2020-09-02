@@ -72,7 +72,6 @@ def BuildCommonCMakeCommand(config):
         '-DLLVM_ENABLE_ASSERTIONS=On',
         '-DLLVM_USE_LINKER={lld}'.format(
             lld=FindTool(config.default_clang, 'ld.lld')),
-        '-DLLVM_ENABLE_LIBCXX=On',
     ]
     if config.binutils_include:
         cmd.append('-DLLVM_BINUTILS_INCDIR={path}'.format(
@@ -80,10 +79,18 @@ def BuildCommonCMakeCommand(config):
     return cmd
 
 
-def BuildLDFlags(config):
+def BuildPass1LDFlags(config):
     flags = [
         '-Wl,-rpath={path}'.format(
             path=os.path.join(os.path.abspath(config.default_clang), 'lib')),
+    ]
+    return flags
+
+
+def BuildPass2LDFlags(config):
+    flags = [
+        '-Wl,-rpath={path}'.format(
+            path=os.path.join(os.path.abspath(config.install_prefix), 'lib')),
     ]
     return flags
 
@@ -160,11 +167,11 @@ def RunPass1(config):
     cmd = BuildCommonCMakeCommand(config)
     # Use clang for training.
     cmd.append('-DLLVM_ENABLE_PROJECTS=clang')
+    cmd.append('-DLLVM_ENABLE_RUNTIMES=compiler-rt')
     cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
         ld=FindTool(config.default_clang, 'ld.lld')))
     cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
-    env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
     env['CFLAGS'] = ' '.join(BuildPass1CFlags(config))
     env['CXXFLAGS'] = ' '.join(BuildPass1CXXFlags(config))
     err = subprocess.call(cmd, env=env, cwd=wd)
@@ -202,7 +209,6 @@ def RunPass2(config):
         projects=';'.join(DEFAULT_PROJECTS)))
     cmd.append(os.path.abspath(config.src_dir))
     env = os.environ.copy()
-    env['LDFLAGS'] = ' '.join(BuildLDFlags(config))
     env['CFLAGS'] = ' '.join(BuildPass2CFlags(config))
     env['CXXFLAGS'] = ' '.join(BuildPass2CXXFlags(config))
     err = subprocess.call(cmd, env=env, cwd=wd)
