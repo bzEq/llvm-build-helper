@@ -131,7 +131,7 @@ def BuildLLVMTestSuiteWithPass1Driver(config):
         '-B',
         build_path,
     ]
-    err = subprocess.call(configure_cmake, env=env)
+    err = subprocess.call(configure_cmake)
     if err != 0:
         logging.error('cmake failed configuring test suite')
         return False
