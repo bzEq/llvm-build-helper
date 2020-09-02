@@ -170,11 +170,12 @@ def RunPass1(config):
     cmd.append('-DLLVM_ENABLE_RUNTIMES=compiler-rt')
     cmd.append('-DCLANG_DEFAULT_LINKER={ld}'.format(
         ld=FindTool(config.default_clang, 'ld.lld')))
+    cmd.append('-DCMAKE_C_FLAGS={flags}'.format(
+        flags=' '.join(BuildPass1CFlags(config))))
+    cmd.append('-DCMAKE_CXX_FLAGS={flags}'.format(
+        flags=' '.join(BuildPass1CXXFlags(config))))
     cmd.append(os.path.abspath(config.src_dir))
-    env = os.environ.copy()
-    env['CFLAGS'] = ' '.join(BuildPass1CFlags(config))
-    env['CXXFLAGS'] = ' '.join(BuildPass1CXXFlags(config))
-    err = subprocess.call(cmd, env=env, cwd=wd)
+    err = subprocess.call(cmd, cwd=wd)
     if err != 0:
         logging.error('cmake failed in pass1')
         return False
@@ -207,11 +208,12 @@ def RunPass2(config):
     cmd.append('-DLLVM_ENABLE_LTO=Thin')
     cmd.append('-DLLVM_ENABLE_PROJECTS={projects}'.format(
         projects=';'.join(DEFAULT_PROJECTS)))
+    cmd.append('-DCMAKE_C_FLAGS={flags}'.format(
+        flags=' '.join(BuildPass2CFlags(config))))
+    cmd.append('-DCMAKE_CXX_FLAGS={flags}'.format(
+        flags=' '.join(BuildPass2CXXFlags(config))))
     cmd.append(os.path.abspath(config.src_dir))
-    env = os.environ.copy()
-    env['CFLAGS'] = ' '.join(BuildPass2CFlags(config))
-    env['CXXFLAGS'] = ' '.join(BuildPass2CXXFlags(config))
-    err = subprocess.call(cmd, env=env, cwd=wd)
+    err = subprocess.call(cmd, cwd=wd)
     if err != 0:
         logging.error('cmake failed in pass2')
         return False
