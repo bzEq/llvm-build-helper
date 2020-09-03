@@ -37,7 +37,6 @@ def main():
     parser.add_argument('--native', action='store_true', default=False)
     parser.add_argument('--cmake_binary', default=shutil.which('cmake'))
     parser.add_argument('--skip_pass1', action='store_true', default=False)
-    parser.add_argument('--skip_test', action='store_true', default=False)
     parser.add_argument('--llvm_test_suite_path')
     config = parser.parse_args()
     CreateDirs(config)
@@ -182,7 +181,7 @@ def RunPass1(config):
     ninja_build = [
         'ninja',
     ]
-    if not config.skip_test and not config.llvm_test_suite_path:
+    if not config.llvm_test_suite_path:
         ninja_build.append('check-all')
     err = subprocess.call(ninja_build, cwd=wd)
     if err != 0:
