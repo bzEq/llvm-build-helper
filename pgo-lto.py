@@ -78,22 +78,6 @@ def BuildCommonCMakeCommand(config):
     return cmd
 
 
-def BuildPass1LDFlags(config):
-    flags = [
-        '-Wl,-rpath={path}'.format(
-            path=os.path.join(os.path.abspath(config.default_clang), 'lib')),
-    ]
-    return flags
-
-
-def BuildPass2LDFlags(config):
-    flags = [
-        '-Wl,-rpath={path}'.format(
-            path=os.path.join(os.path.abspath(config.install_prefix), 'lib')),
-    ]
-    return flags
-
-
 def BuildPass1CFlags(config):
     flags = [
         '-fprofile-generate={path}'.format(path=os.path.join(
